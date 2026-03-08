@@ -20,7 +20,10 @@ const ANTHROPIC_MODEL = "claude-haiku-4-5";
 const MAX_RESPONSE_TOKENS = 400;
 const UPSTREAM_TIMEOUT_MS = 25_000;
 const MAX_TEXT_LENGTH = 500;
-const ALLOWED_ORIGIN = "https://ai.techrails.co";
+const ALLOWED_ORIGINS = new Set([
+  "https://ai.techrails.co",
+  "https://techrails.co",
+]);
 
 // Allowlists for enum fields — values must match exactly what the frontend sends.
 const ALLOWED_VALUES = {
@@ -57,7 +60,7 @@ export default {
       if (requestOrigin && !isAllowedOrigin(requestOrigin, env)) {
         return new Response(null, { status: 403 });
       }
-      return corsResponse(null, 204, env);
+      return corsResponse(null, 204, env, requestOrigin);
     }
 
     // Reject browser cross-origin requests from disallowed origins.
@@ -67,6 +70,7 @@ export default {
         JSON.stringify({ error: "Forbidden" }),
         403,
         env,
+        requestOrigin,
       );
     }
 
@@ -75,6 +79,7 @@ export default {
         JSON.stringify({ error: "Method not allowed" }),
         405,
         env,
+        requestOrigin,
       );
     }
 
@@ -84,6 +89,7 @@ export default {
         JSON.stringify({ error: "Content-Type must be application/json" }),
         415,
         env,
+        requestOrigin,
       );
     }
 
@@ -93,6 +99,7 @@ export default {
         JSON.stringify({ error: "Service unavailable" }),
         503,
         env,
+        requestOrigin,
       );
     }
 
@@ -104,6 +111,7 @@ export default {
         JSON.stringify({ error: "Invalid JSON body" }),
         400,
         env,
+        requestOrigin,
       );
     }
 
@@ -113,6 +121,7 @@ export default {
         JSON.stringify({ error: validationError }),
         400,
         env,
+        requestOrigin,
       );
     }
 
@@ -153,6 +162,7 @@ export default {
         }),
         502,
         env,
+        requestOrigin,
       );
     } finally {
       clearTimeout(timeout);
@@ -171,6 +181,7 @@ export default {
         }),
         502,
         env,
+        requestOrigin,
       );
     }
 
@@ -186,6 +197,7 @@ export default {
         JSON.stringify({ error: "Invalid response from upstream" }),
         502,
         env,
+        requestOrigin,
       );
     }
 
@@ -201,10 +213,11 @@ export default {
         }),
         502,
         env,
+        requestOrigin,
       );
     }
 
-    return corsResponse(JSON.stringify({ text }), 200, env);
+    return corsResponse(JSON.stringify({ text }), 200, env, requestOrigin);
   },
 };
 
@@ -319,11 +332,15 @@ function isDevelopment(env) {
 
 function isAllowedOrigin(origin, env) {
   if (isDevelopment(env)) return true;
-  return origin === ALLOWED_ORIGIN;
+  return ALLOWED_ORIGINS.has(origin);
 }
 
-function corsResponse(body, status, env) {
-  const allowOrigin = isDevelopment(env) ? "*" : ALLOWED_ORIGIN;
+function corsResponse(body, status, env, requestOrigin = null) {
+  const allowOrigin = isDevelopment(env)
+    ? "*"
+    : (requestOrigin && ALLOWED_ORIGINS.has(requestOrigin))
+      ? requestOrigin
+      : [...ALLOWED_ORIGINS][0];
 
   const headers = {
     "access-control-allow-origin": allowOrigin,

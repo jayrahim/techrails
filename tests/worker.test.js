@@ -41,10 +41,19 @@ function mockAnthropicOk(text = 'Primary Structural Gap\nContent here.') {
 describe('worker — CORS preflight', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('returns 204 on OPTIONS from the allowed origin (production)', async () => {
+  it('returns 204 on OPTIONS from ai.techrails.co (production)', async () => {
     const req = new Request('https://ai.techrails.co/api/snapshot', {
       method: 'OPTIONS',
       headers: { origin: 'https://ai.techrails.co' },
+    });
+    const res = await worker.fetch(req, PROD_ENV);
+    expect(res.status).toBe(204);
+  });
+
+  it('returns 204 on OPTIONS from techrails.co (production)', async () => {
+    const req = new Request('https://ai.techrails.co/api/snapshot', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://techrails.co' },
     });
     const res = await worker.fetch(req, PROD_ENV);
     expect(res.status).toBe(204);
@@ -72,10 +81,16 @@ describe('worker — CORS preflight', () => {
 describe('worker — CORS response headers', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('sets the allowed origin header to the production domain', async () => {
+  it('reflects ai.techrails.co in the CORS header when that origin is used', async () => {
     mockAnthropicOk();
-    const res = await worker.fetch(makeRequest({ answers: VALID_ANSWERS }), PROD_ENV);
+    const res = await worker.fetch(makeRequest({ answers: VALID_ANSWERS }, { origin: 'https://ai.techrails.co' }), PROD_ENV);
     expect(res.headers.get('access-control-allow-origin')).toBe('https://ai.techrails.co');
+  });
+
+  it('reflects techrails.co in the CORS header when that origin is used', async () => {
+    mockAnthropicOk();
+    const res = await worker.fetch(makeRequest({ answers: VALID_ANSWERS }, { origin: 'https://techrails.co' }), PROD_ENV);
+    expect(res.headers.get('access-control-allow-origin')).toBe('https://techrails.co');
   });
 
   it('uses wildcard origin in development mode', async () => {
