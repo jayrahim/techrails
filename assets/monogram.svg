@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-label="TechRails">
+  <title>TechRails</title>
+  <!-- Background: deep navy -->
+  <rect width="40" height="40" rx="8" fill="#0d1526"/>
+  <!-- Gold border hint -->
+  <rect x="1" y="1" width="38" height="38" rx="7" fill="none" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.25"/>
+  <!-- Accent bar: left edge -->
+  <rect x="8" y="12" width="2.5" height="16" rx="1.25" fill="#c9a84c"/>
+  <!-- TR lettermark -->
+  <text x="23" y="27"
+    text-anchor="middle"
+    font-family="'Outfit', system-ui, -apple-system, sans-serif"
+    font-weight="600"
+    font-size="17"
+    letter-spacing="-0.5">
+    <tspan fill="#f5f0e8">T</tspan><tspan fill="#c9a84c">R</tspan>
+  </text>
+</svg>

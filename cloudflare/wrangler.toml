@@ -1,0 +1,22 @@
+name = "techrails-snapshot"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# ── Environments ──────────────────────────────────────────────────────────────
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+routes = [
+  { pattern = "ai.techrails.co/api/snapshot", zone_id = "50e099d5b7ff838a954efd190d356f36" }
+]
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# Set the Anthropic API key as a secret (never commit it):
+#
+#   wrangler secret put ANTHROPIC_API_KEY
+#
+# Secrets are available at runtime as env.ANTHROPIC_API_KEY inside worker.js.

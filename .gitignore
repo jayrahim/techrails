@@ -1,0 +1,6 @@
+# Local secrets — never commit
+cloudflare/.dev.vars
+ai/js/config.js
+
+# Dependencies
+node_modules/
