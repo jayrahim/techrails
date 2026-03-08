@@ -1,0 +1,14 @@
+{
+  "name": "techrails",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "jsdom": "^25.0.0",
+    "vitest": "^2.1.0"
+  }
+}

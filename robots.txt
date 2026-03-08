@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://techrails.co/sitemap.xml
